@@ -1,122 +1,162 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Cart from "./pages/Cart";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Admin from "./pages/Admin";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+
+  const PRODUCTS = [
+    {
+      id: 1,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSecF1Ecdj1ySGb35m0aGu-NH4yD0IGBNRHy8xlbvnStw&s=10",
+      description: "Unique Bowling Ball",
+      name: "Bowling Ball",
+      category: "Sport",
+      price: 50
+    },
+
+    {
+      id: 2,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtiB8xHYViS5zfnyPal-DwjBcSZomxGVipjkXtvv64GQ&s=10",
+      description: "Elegant Glasses",
+      name: "Prada Glasses",
+      category: "Accessories",
+      price: 250
+    },
+
+    {
+      id: 3,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX-c_93d_7zKym0FZsNk9nJ_027szpQeQW2m2_42A1Yw&s=10",
+      description: "performance e jashtezakonshme",
+      name: "Lenovo Laptop",
+      category: "Tech",
+      price: 350
+    },
+
+    {
+      id: 4,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaWST2-0ZulumMuJh04nz5IaDjkODRiIdxVOLTFc82qA&s=10",
+      description: "Makine Loder, shume terheqese",
+      name: "Lamborghini Toy car",
+      category: "Toy",
+      price: 5
+    },
+
+    {
+      id: 5,
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5qPyNiJJIpQP1mc52h3d7tAPBViVyjfhu75jyYQ2EYw&s=10",
+      description: "Stil unik dhe elegant",
+      name: "Maicë Diesel",
+      category: "Clothing",
+      price: 80
+    }
+
+  ];
+
+  const [products, setProducts] = useState(PRODUCTS);
+
+  const [cart, setCart] = useState([]);
+
+
+  const addToCart = (product) => {
+
+    setCart((prevCart) => {
+
+      const existingItem = prevCart.find((item) => item.id === product.id);
+
+      if (existingItem) {
+
+        return prevCart.map((item) => {
+
+          if (item.id === product.id) {
+            return { ...item, quantity: item.quantity + 1 };
+          }
+
+          return item;
+
+        });
+
+      } else {
+
+        return [...prevCart, { ...product, quantity: 1 }];
+
+      }
+
+    });
+
+  };
+
+
+  const removeFromCart = (id) => {
+
+    setCart((prev) => prev.filter((item) => item.id !== id));
+
+  };
+
+  const addProduct = (newProduct) => {
+
+    setProducts((prev) => [...prev, { ...newProduct, id: Date.now() }]);
+
+  };
+
+  const updateProducts = (updatedProduct) => {
+
+    setProducts((prev) =>
+
+      prev.map((item) => (item.id === updatedProduct.id ? updatedProduct : item))
+
+    );
+
+  };
+
+  const deleteProduct = (id) => {
+
+    setProducts((prev) => prev.filter((item) => item.id !== id));
+
+    setCart((prev) => prev.filter((item) => item.id !== id));
+
+  };
+
+
+  const totalCartItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <Header cartCount={totalCartItems} />
 
-      <div className="ticks"></div>
+      <main>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <Routes>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+          <Route path="/" element={<Home products={products} onAddToCart={addToCart} />} />
+
+          <Route path="/cart" element={<Cart cart={cart} onRemoveFromCart={removeFromCart} />} />
+
+          <Route
+            path="/admin"
+            element={
+              <Admin
+                products={products}
+                onAddProduct={addProduct}
+                onDeleteProduct={deleteProduct}
+                onUpdateProduct={updateProducts}
+
+              />
+
+            }
+          />
+
+        </Routes>
+
+      </main>
+
+      <Footer />
+
     </>
-  )
-}
 
-export default App
+  );
+
+};
